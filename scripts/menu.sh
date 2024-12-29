@@ -233,22 +233,25 @@ log_pusher() { #日志菜单
 	[ -n "$push_bark" ] && stat_bark=32m已启用 || stat_bark=33m未启用
 	[ -n "$push_Po" ] && stat_Po=32m已启用 || stat_Po=33m未启用
 	[ -n "$push_PP" ] && stat_PP=32m已启用 || stat_PP=33m未启用
+	[ -n "$push_SynoChat" ] && stat_SynoChat=32m已启用 || stat_SynoChat=33m未启用
 	[ "$task_push" = 1 ] && stat_task=32m已启用 || stat_task=33m未启用
 	[ -n "$device_name" ] && device_s=32m$device_name || device_s=33m未设置
 	echo -----------------------------------------------
-	echo -e " 1 查看\033[36m运行日志\033[0m"
-	echo -e " 2 Telegram推送	——\033[$stat_TG\033[0m"
-	echo -e " 3 PushDeer推送	——\033[$stat_Deer\033[0m"
-	echo -e " 4 Bark推送-IOS	——\033[$stat_bark\033[0m"
-	echo -e " 5 Passover推送	——\033[$stat_Po\033[0m"
-	echo -e " 6 PushPlus推送	——\033[$stat_PP\033[0m"
-	echo -e " 7 推送任务日志	——\033[$stat_task\033[0m"
-	echo -e " 8 设置设备名称	——\033[$device_s\033[0m"
-	echo -e " 9 清空日志文件"
+	echo -e " 1 Telegram推送	——\033[$stat_TG\033[0m"
+	echo -e " 2 PushDeer推送	——\033[$stat_Deer\033[0m"
+	echo -e " 3 Bark推送-IOS	——\033[$stat_bark\033[0m"
+	echo -e " 4 Passover推送	——\033[$stat_Po\033[0m"
+	echo -e " 5 PushPlus推送	——\033[$stat_PP\033[0m"
+	echo -e " 6 SynoChat推送	——\033[$stat_SynoChat\033[0m"
+	echo -----------------------------------------------
+	echo -e " a 查看\033[36m运行日志\033[0m"
+	echo -e " b 推送任务日志	——\033[$stat_task\033[0m"
+	echo -e " c 设置设备名称	——\033[$device_s\033[0m"
+	echo -e " d 清空日志文件"
 	echo -----------------------------------------------
 	read -p "请输入对应数字 > " num
 	case $num in
-	1)
+	a)
 		if [ -s ${TMPDIR}/ShellCrash.log ]; then
 			echo -----------------------------------------------
 			cat ${TMPDIR}/ShellCrash.log
@@ -258,7 +261,7 @@ log_pusher() { #日志菜单
 		fi
 		sleep 1
 		;;
-	2)
+	1)
 		echo -----------------------------------------------
 		if [ -n "$push_TG" ]; then
 			read -p "确认关闭TG日志推送？(1/0) > " res
@@ -300,7 +303,7 @@ log_pusher() { #日志菜单
 		fi
 		log_pusher
 		;;
-	3)
+	2)
 		echo -----------------------------------------------
 		if [ -n "$push_Deer" ]; then
 			read -p "确认关闭PushDeer日志推送？(1/0) > " res
@@ -327,7 +330,7 @@ log_pusher() { #日志菜单
 		fi
 		log_pusher
 		;;
-	4)
+	3)
 		echo -----------------------------------------------
 		if [ -n "$push_bark" ]; then
 			read -p "确认关闭Bark日志推送？(1/0) > " res
@@ -354,7 +357,7 @@ log_pusher() { #日志菜单
 		fi
 		log_pusher
 		;;
-	5)
+	4)
 		echo -----------------------------------------------
 		if [ -n "$push_Po" ]; then
 			read -p "确认关闭Pushover日志推送？(1/0) > " res
@@ -393,7 +396,7 @@ log_pusher() { #日志菜单
 		sleep 1
 		log_pusher
 		;;
-	6)
+	5)
 		echo -----------------------------------------------
 		if [ -n "$push_PP" ]; then
 			read -p "确认关闭PushPlus日志推送？(1/0) > " res
@@ -417,19 +420,55 @@ log_pusher() { #日志菜单
 		sleep 1
 		log_pusher
 		;;
-	7)
+	6)
+		echo -----------------------------------------------
+		if [ -n "$push_SynoChat" ]; then
+			read -p "确认关闭SynoChat日志推送？(1/0) > " res
+			[ "$res" = 1 ] && {
+				push_SynoChat=
+				setconfig push_SynoChat
+			}
+		else
+			echo -----------------------------------------------
+			read -p "请输入你的Synology DSM主页地址 > " URL
+			echo -----------------------------------------------
+			read -p "请输入你的Synology Chat Token > " TOKEN
+			echo -----------------------------------------------
+			echo -e '请通过"你的群晖地址/webapi/entry.cgi?api=SYNO.Chat.External&method=user_list&version=2&token=你的TOKEN"获取user_id'
+			echo -----------------------------------------------
+			read -p "请输入你的user_id > " USERID			
+			if [ -n "$URL" ]; then
+				push_SynoChat=$USERID
+				setconfig push_SynoChat $USERID
+				setconfig push_ChatURL $URL
+				setconfig push_ChatTOKEN $TOKEN
+				setconfig push_ChatUSERID $USERID
+				${CRASHDIR}/start.sh logger "已完成SynoChat日志推送设置！" 32
+			else
+				echo -e "\033[31m输入错误，请重新输入！\033[0m"
+				setconfig push_ChatURL
+				setconfig push_ChatTOKEN
+				setconfig push_ChatUSERID
+				push_SynoChat=
+				setconfig push_SynoChat
+			fi
+		fi
+		sleep 1
+		log_pusher
+		;;
+	b)
 		[ "$task_push" = 1 ] && task_push='' || task_push=1
 		setconfig task_push $task_push
 		sleep 1
 		log_pusher
 		;;
-	8)
+	c)
 		read -p "请输入本设备自定义推送名称 > " device_name
 		setconfig device_name $device_name
 		sleep 1
 		log_pusher
 		;;
-	9)
+	d)
 		echo -e "\033[33m运行日志及任务日志均已清空！\033[0m"
 		rm -rf ${TMPDIR}/ShellCrash.log
 		sleep 1
@@ -558,10 +597,10 @@ setport() { #端口设置
 		setport
 	fi
 }
-setdns() { #DNS设置
+setdns() { #DNS详细设置
 	[ -z "$dns_nameserver" ] && dns_nameserver='114.114.114.114, 223.5.5.5'
 	[ -z "$dns_fallback" ] && dns_fallback='1.0.0.1, 8.8.4.4'
-	[ -z "$hosts_opt" ] && hosts_opt=已开启
+	[ -z "$hosts_opt" ] && hosts_opt=已启用
 	[ -z "$dns_redir" ] && dns_redir=未开启
 	[ -z "$dns_no" ] && dns_no=未禁用
 	echo -----------------------------------------------
@@ -1038,6 +1077,7 @@ setboot() { #启动相关设置
 	[ -z "$start_delay" -o "$start_delay" = 0 ] && delay=未设置 || delay=${start_delay}秒
 	[ "$autostart" = "enable" ] && auto_set="\033[33m禁止" || auto_set="\033[32m允许"
 	[ "${BINDIR}" = "${CRASHDIR}" ] && mini_clash=未开启 || mini_clash=已开启
+	[ -z "$network_check" ] && network_check=已开启
 	echo -----------------------------------------------
 	echo -e "\033[30;47m欢迎使用启动设置菜单：\033[0m"
 	echo -----------------------------------------------
@@ -1046,6 +1086,7 @@ setboot() { #启动相关设置
 	echo -e " 3 设置自启延时:	\033[36m$delay\033[0m	————用于解决自启后服务受限"
 	echo -e " 4 启用小闪存模式:	\033[36m$mini_clash\033[0m	————用于闪存空间不足的设备"
 	[ "${BINDIR}" != "${CRASHDIR}" ] && echo -e " 5 设置小闪存目录:	\033[36m${BINDIR}\033[0m"
+	echo -e " 6 自启网络检查:	\033[36m$network_check\033[0m	————禁用则跳过自启时网络检查"
 	echo -----------------------------------------------
 	echo -e " 0 \033[0m返回上级菜单\033[0m"
 	read -p "请输入对应数字 > " num
@@ -1174,6 +1215,22 @@ setboot() { #启动相关设置
 			;;
 		esac
 		setconfig BINDIR ${BINDIR} ${CRASHDIR}/configs/command.env
+		setboot
+		;;
+	6)
+		echo -e "\033[33m如果你的设备启动后可以正常使用，则无需变更设置！！\033[0m"
+		echo -e "\033[36m禁用时，如果使用了小闪存模式或者rule-set等在线规则，则可能会因无法联网而导致启动失败！\033[0m"
+		echo -e "\033[32m启用时，会导致部分性能较差或者拨号较慢的设备可能会因查询超时导致启动失败！\033[0m"
+		read -p "是否切换？(1/0) > " res
+		[ "$res" = '1' ] && {
+			if [ "$network_check" = "已禁用" ];then
+				network_check=已启用
+			else
+				network_check=已禁用
+			fi
+			setconfig network_check $network_check					
+		}
+		sleep 1
 		setboot
 		;;
 	*)
@@ -1412,19 +1469,18 @@ set_redir_mod() { #代理模式设置
 		;;
 	esac
 }
-set_dns_mod() { #DNS设置
+set_dns_mod() { #DNS模式设置
 	echo -----------------------------------------------
 	echo -e "当前DNS运行模式为：\033[47;30m $dns_mod \033[0m"
 	echo -e "\033[33m切换模式后需要手动重启服务以生效！\033[0m"
 	echo -----------------------------------------------
 	echo -e " 1 fake-ip模式：   \033[32m响应速度更快\033[0m"
-	echo -e "                   不支持绕过CN-IP功能"
-	if [ "$crashcore" = singbox -o "$crashcore" = singboxp ]; then
+	echo -e "                   不支持CN-IP绕过功能"
+	echo -e " 2 redir_host模式：\033[32m兼容性更好\033[0m"
+	echo -e "                   需搭配加密DNS使用"
+	if [ "$crashcore" = singbox ] || [ "$crashcore" = singboxp ] || [ "$crashcore" = meta ]; then
 		echo -e " 3 mix混合模式：   \033[32m内部realip外部fakeip\033[0m"
-		echo -e "                   依赖geosite-cn.(db/srs)数据库"
-	elif [ "$crashcore" = meta ]; then
-		echo -e " 2 redir_host模式：\033[32m兼容性更好\033[0m"
-		echo -e "                   需搭配加密DNS使用"
+		echo -e "                   依赖geosite.dat/geosite-cn.srs数据库"
 	fi
 	echo -e " 4 \033[36mDNS进阶设置\033[0m"
 	echo " 0 返回上级菜单"
@@ -1444,7 +1500,7 @@ set_dns_mod() { #DNS设置
 		echo -e "\033[36m已设为 $dns_mod 模式！！\033[0m"
 		;;
 	3)
-		if [ "$crashcore" = singbox -o "$crashcore" = singboxp ]; then
+		if [ "$crashcore" = singbox ] || [ "$crashcore" = singboxp ] || [ "$crashcore" = meta ]; then
 			dns_mod=mix
 			setconfig dns_mod $dns_mod
 			echo -----------------------------------------------
@@ -1482,15 +1538,16 @@ fake_ip_filter() {
 	case $input in
 	0) ;;
 	'') ;;
-	[0-99])
-		sed -i "${input}d" ${CRASHDIR}/configs/fake_ip_filter 2>/dev/null
-		echo -e "\033[32m移除成功！\033[0m"
-		fake_ip_filter
-		;;
 	*)
-		echo -e "你输入的地址是：\033[32m$input\033[0m"
-		read -p "确认添加？(1/0) > " res
-		[ "$res" = 1 ] && echo $input >>${CRASHDIR}/configs/fake_ip_filter
+		if [ $input -ge 1 ] 2>/dev/null;then
+			sed -i "${input}d" ${CRASHDIR}/configs/fake_ip_filter 2>/dev/null
+			echo -e "\033[32m移除成功！\033[0m"
+		else
+			echo -e "你输入的地址是：\033[32m$input\033[0m"
+			read -p "确认添加？(1/0) > " res
+			[ "$res" = 1 ] && echo $input >>${CRASHDIR}/configs/fake_ip_filter
+		fi
+		sleep 1
 		fake_ip_filter
 		;;
 	esac
@@ -1504,7 +1561,7 @@ normal_set() { #基础设置
 	[ -z "$cn_ip_route" ] && cn_ip_route=未开启
 	[ -z "$local_proxy" ] && local_proxy=未开启
 	[ -z "$quic_rj" ] && quic_rj=未开启
-	[ -z "$(cat ${CRASHDIR}/configs/mac)" ] && mac_return=未开启 || mac_return=已启用
+	[ -z "$(cat ${CRASHDIR}/configs/mac ${CRASHDIR}/configs/ip_filter 2>/dev/null)" ] && mac_return=未开启 || mac_return=已启用
 	#
 	echo -----------------------------------------------
 	echo -e "\033[30;47m欢迎使用功能设置菜单：\033[0m"
