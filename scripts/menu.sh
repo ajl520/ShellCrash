@@ -95,7 +95,7 @@ ckstatus() {
 		#检测系统端口占用
 		checkport
 	fi
-	[ "$crashcore" = singbox -o "$crashcore" = singboxp ] && corename=SingBox || corename=Clash
+	corename=$(echo $crashcore | sed 's/singbox/SingBox/' | sed 's/clash/Clash/' | sed 's/meta/Mihomo/')
 	[ "$firewall_area" = 5 ] && corename='转发'
 	[ -f ${TMPDIR}/debug.log -o -f ${CRASHDIR}/debug.log -a -n "$PID" ] && auto="\033[33m并处于debug状态！\033[0m"
 	#输出状态
@@ -115,7 +115,7 @@ ckstatus() {
 	#检查执行权限
 	[ ! -x ${CRASHDIR}/start.sh ] && chmod +x ${CRASHDIR}/start.sh
 	#检查/tmp内核文件
-	for file in $(ls -F /tmp | grep -v [/$] | grep -v ' ' | grep -Ev ".*(gz|zip|7z|tar)$" | grep -iE 'CrashCore|^clash$|^clash-linux.*|^mihomo.*|^sing.*box|^clash.meta.*'); do
+	for file in $(ls /tmp | grep -v [/$] | grep -v ' ' | grep -Ev ".*(gz|zip|7z|tar)$" | grep -iE 'CrashCore|^clash$|^clash-linux.*|^mihomo.*|^sing.*box|^clash.meta.*'); do
 		file=/tmp/$file
 		chmod +x $file
 		echo -e "发现可用的内核文件： \033[36m$file\033[0m "
@@ -143,7 +143,7 @@ ckstatus() {
 		echo -----------------------------------------------
 	done
 	#检查/tmp配置文件
-	for file in $(ls -F /tmp | grep -v [/$] | grep -v ' ' | grep -iE '.yaml$|.yml$|config.json$'); do
+	for file in $(ls /tmp | grep -v [/$] | grep -v ' ' | grep -iE '.yaml$|.yml$|config.json$'); do
 		file=/tmp/$file
 		echo -e "发现内核配置文件： \033[36m$file\033[0m "
 		read -p "是否加载为$crashcore的配置文件？(1/0) > " res
@@ -577,7 +577,7 @@ setport() { #端口设置
 		setport
 	elif [ "$num" = 8 ]; then
 		echo -----------------------------------------------
-		echo -e "\033[33m如果你的局域网网段不是192.168.x或127.16.x或10.x开头，请务必修改！\033[0m"
+		echo -e "\033[33m如果你的局域网网段不是192.168.x或172.16.x或10.x开头，请务必修改！\033[0m"
 		echo -e "\033[31m设置后如本机host地址有变动，请务必重新修改！\033[0m"
 		echo -----------------------------------------------
 		read -p "请输入自定义host地址(输入0移除自定义host) > " host
@@ -1617,8 +1617,13 @@ normal_set() { #基础设置
 	elif [ "$num" = 4 ]; then
 		set_common_ports() {
 			if [ "$common_ports" = "未开启" ]; then
-				echo -e "\033[33m已设为仅代理【$multiport】等常用端口！！\033[0m"
+				echo -e "\033[33m当前代理端口为：【$multiport】\033[0m"
 				echo -e "\033[31m注意，fake-ip模式下，非常用端口的域名连接将不受影响！！\033[0m"
+				read -p "是否修改默认端口？(1/0) > " res
+				[ "$res" = "1" ] && {
+					read -p "请输入自定义端口,注意用小写逗号分隔 > " text
+					[ -n "$text" ] && setconfig multiport $text && echo -e "\033[33m已设为代理【$multiport】端口！！\033[0m"
+				}
 				common_ports=已开启
 				sleep 1
 			else

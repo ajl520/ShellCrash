@@ -84,6 +84,9 @@ setrules(){ #自定义规则
 		;;
 		esac
 	}
+	get_rule_group(){
+		"$CRASHDIR"/start.sh get_save http://127.0.0.1:${db_port}/proxies | sed 's/:{/!/g' | awk -F '!' '{for(i=1;i<=NF;i++) print $i}' | grep -aE '"Selector|URLTest|LoadBalance"' | grep -aoE '"name":.*"now":".*",' | awk -F '"' '{print "#"$4}' | tr -d '\n'
+	}
 	echo -----------------------------------------------
 	echo -e "\033[33m你可以在这里快捷管理自定义规则\033[0m"
 	echo -e "如需批量操作，请手动编辑：\033[36m $YAMLSDIR/rules.yaml\033[0m"
@@ -100,8 +103,8 @@ setrules(){ #自定义规则
 	0)
 	;;
 	1)
-		rule_type="DOMAIN-SUFFIX DOMAIN-KEYWORD IP-CIDR SRC-IP-CIDR DST-PORT SRC-PORT GEOIP GEOSITE IP-CIDR6 DOMAIN"
-		rule_group="DIRECT#REJECT$(cat $YAMLSDIR/proxy-groups.yaml $YAMLSDIR/config.yaml 2>/dev/null | grep -Ev '^#' | grep -o '\- name:.*' | sed 's/- name: /#/g' | tr -d '\n')"
+		rule_type="DOMAIN-SUFFIX DOMAIN-KEYWORD IP-CIDR SRC-IP-CIDR DST-PORT SRC-PORT GEOIP GEOSITE IP-CIDR6 DOMAIN PROCESS-NAME"
+		rule_group="DIRECT#REJECT$(get_rule_group)"
 		set_rule_type
 		setrules
 	;;
@@ -1481,7 +1484,7 @@ setcore(){ #内核选择菜单
 	echo -e "2 \033[43;30m SingBox \033[0m：	\033[32m支持全面占用低\033[0m"
 	echo -e " >>\033[32m$singbox_v  	\033[33m不支持providers\033[0m"
 	echo -e "  说明文档：	\033[36;4mhttps://sing-box.sagernet.org\033[0m"
-	echo -e "3 \033[43;30m  Meta  \033[0m：	\033[32m多功能，支持全面\033[0m"
+	echo -e "3 \033[43;30m Mihomo  \033[0m：	\033[32m(原meta内核)支持全面\033[0m"
 	echo -e " >>\033[32m$meta_v   	\033[33m占用略高，GeoSite可能不兼容华硕固件\033[0m"
 	echo -e "  说明文档：	\033[36;4mhttps://wiki.metacubex.one\033[0m"
 	echo -e "4 \033[43;30m SingBoxP \033[0m：	\033[32m支持ssr、providers、dns并发……\033[0m"
@@ -1643,7 +1646,7 @@ setcustgeo(){ #下载自定义数据库文件
 	;;
 	2)
 		project=DustinWin/ruleset_geodata
-		api_tag=clash
+		api_tag=mihomo
 		checkcustgeo
 		setcustgeo
 	;;
@@ -1819,7 +1822,7 @@ getdb(){ #下载Dashboard文件
 		#写入配置文件
 		setconfig hostdir \'$hostdir\'
 		echo -----------------------------------------------
-		echo -e "\033[32m面板安装成功！\033[0m"
+		echo -e "\033[32m面板安装成功！\033[36m如未生效，请使用【Ctrl+F5】强制刷新浏览器！！！\033[0m"
 		rm -rf ${TMPDIR}/clashdb.tar.gz
 	fi
 	sleep 1
@@ -2235,14 +2238,24 @@ userguide(){
 			forwhat
 		elif [ "$num" = 1 ];then
 			#设置运行模式
-			redir_mod="Redir模式"
+			redir_mod="混合模式"
+			[ -n "$(echo $cputype | grep -E "linux.*mips.*")" ] && {
+				if grep -qE '^TPROXY$' /proc/net/ip_tables_targets || modprobe xt_TPROXY >/dev/null 2>&1; then
+					redir_mod="Tproxy模式"
+				else
+					redir_mod="Redir模式"
+				fi
+				setconfig crashcore "clash"
+			}
 			setconfig redir_mod "$redir_mod"
-			[ -n "$(echo $cputype | grep -E "linux.*mips.*")" ] && setconfig crashcore "clash"
+			#默认启用绕过CN-IP
+			setconfig cn_ip_route 已开启
 			#自动识别IPV6
 			[ -n "$(ip a 2>&1 | grep -w 'inet6' | grep -E 'global' | sed 's/.*inet6.//g' | sed 's/scope.*$//g')" ] && {
 				setconfig ipv6_redir 已开启
 				setconfig ipv6_support 已开启
 				setconfig ipv6_dns 已开启
+				setconfig cn_ipv6_route 已开启
 			}
 			#设置开机启动
 			[ -f /etc/rc.common -a "$(cat /proc/1/comm)" = "procd" ] && /etc/init.d/shellcrash enable
@@ -2259,6 +2272,9 @@ userguide(){
 					sysctl -w net.ipv4.ip_forward=1
 				} && echo "已成功开启ipv4转发，如未正常开启，请手动重启设备！" || echo "开启失败！请自行谷歌查找当前设备的开启方法！"
 			fi
+			#禁止docker启用的net.bridge.bridge-nf-call-iptables
+			sysctl -w net.bridge.bridge-nf-call-iptables=0 > /dev/null 2>&1
+			sysctl -w net.bridge.bridge-nf-call-ip6tables=0 > /dev/null 2>&1
 		elif [ "$num" = 2 ];then
 			setconfig redir_mod "Redir模式"
 			[ -n "$(echo $cputype | grep -E "linux.*mips.*")" ] && setconfig crashcore "clash"
@@ -2300,7 +2316,8 @@ userguide(){
 	#设置加密DNS
 	if [ -s $openssldir/certs/ca-certificates.crt ];then
 		dns_nameserver='https://223.5.5.5/dns-query, https://doh.pub/dns-query, tls://dns.rubyfish.cn:853'
-		dns_fallback='https://1.0.0.1/dns-query, https://8.8.4.4/dns-query, https://doh.opendns.com/dns-query'
+		#dns_fallback='https://1.0.0.1/dns-query, https://8.8.4.4/dns-query, https://doh.opendns.com/dns-query'
+		dns_fallback=$dns_nameserver
 		setconfig dns_nameserver \'"$dns_nameserver"\'
 		setconfig dns_fallback \'"$dns_fallback"\'
 	fi
