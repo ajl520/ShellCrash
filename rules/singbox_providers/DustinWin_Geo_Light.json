@@ -1,4 +1,4 @@
-//DustinWin-ruleset轻量规则
+//DustinWin-GeoSite轻量规则
 {
   "outbounds": [
     { "tag": "🚀 节点选择", "type": "selector", "outbounds": [ "🇭🇰 香港节点", "🇹🇼 台湾节点", "🇯🇵 日本节点", "🇸🇬 新加坡节点", "🇺🇸 美国节点", "👑 高级节点", "📉 省流节点", {providers_tags} ] },
@@ -23,56 +23,12 @@
       { "protocol": [ "dns" ], "outbound": "dns-out" },
       { "clash_mode": [ "Direct" ], "outbound": "DIRECT" },
       { "clash_mode": [ "Global" ], "outbound": "GLOBAL" },
-      { "rule_set": [ "private" ], "outbound": "🎯 全球直连" },
-      { "rule_set": [ "tld-proxy" ], "outbound": "🧱 代理域名" },
-      { "rule_set": [ "proxy" ], "outbound": "🧱 代理域名" },
-      { "rule_set": [ "privateip" ], "outbound": "🎯 全球直连", "skip_resolve": true },
-      { "rule_set": [ "cnip" ], "outbound": "🀄️ 直连 IP" },
-      { "rule_set": [ "telegramip" ], "outbound": "📲 电报消息", "skip_resolve": true }
-    ],
-    "rule_set": [
-      {
-        "tag": "private",
-        "type": "remote",
-        "format": "binary",
-        "path": "./private.srs",
-        "url": "https://github.com/DustinWin/ruleset_geodata/releases/download/sing-box-ruleset-compatible/private.srs"
-      },
-      {
-        "tag": "tld-proxy",
-        "type": "remote",
-        "format": "binary",
-        "path": "./tld-proxy.srs",
-        "url": "https://github.com/DustinWin/ruleset_geodata/releases/download/sing-box-ruleset-compatible/tld-proxy.srs"
-      },
-      {
-        "tag": "proxy",
-        "type": "remote",
-        "format": "binary",
-        "path": "./proxy.srs",
-        "url": "https://github.com/DustinWin/ruleset_geodata/releases/download/sing-box-ruleset-compatible/proxy.srs"
-      },
-      {
-        "tag": "privateip",
-        "type": "remote",
-        "format": "binary",
-        "path": "./privateip.srs",
-        "url": "https://github.com/DustinWin/ruleset_geodata/releases/download/sing-box-ruleset-compatible/privateip.srs"
-      },
-      {
-        "tag": "cnip",
-        "type": "remote",
-        "format": "binary",
-        "path": "./cnip.srs",
-        "url": "https://github.com/DustinWin/ruleset_geodata/releases/download/sing-box-ruleset-compatible/cnip.srs"
-      },
-      {
-        "tag": "telegramip",
-        "type": "remote",
-        "format": "binary",
-        "path": "./telegramip.srs",
-        "url": "https://github.com/DustinWin/ruleset_geodata/releases/download/sing-box-ruleset-compatible/telegramip.srs"
-      }
+      { "geosite": [ "private" ], "outbound": "🎯 全球直连" },
+      { "geosite": [ "tld-proxy" ], "outbound": "🧱 代理域名" },
+      { "geosite": [ "proxy" ], "outbound": "🧱 代理域名" },
+      { "geoip": [ "private" ], "outbound": "🎯 全球直连", "skip_resolve": true },
+      { "geoip": [ "cn" ], "outbound": "🀄️ 直连 IP" },
+      { "geoip": [ "telegram" ], "outbound": "📲 电报消息", "skip_resolve": true }
     ],
     "final": "🐟 漏网之鱼"
   }

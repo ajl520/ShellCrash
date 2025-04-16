@@ -1,4 +1,4 @@
-//DustinWin-GeoSite全分组规则
+//DustinWin-GeoSite精简规则
 {
   "outbounds": [
     { "tag": "🚀 节点选择", "type": "selector", "outbounds": [ "🇭🇰 香港节点", "🇹🇼 台湾节点", "🇯🇵 日本节点", "🇸🇬 新加坡节点", "🇺🇸 美国节点", "👑 高级节点", "📉 省流节点", {providers_tags} ] },
@@ -9,8 +9,6 @@
     { "tag": "🪟 微软服务", "type": "selector", "outbounds": [ "🎯 全球直连", "🚀 节点选择" ] },
     { "tag": "🇬 谷歌服务", "type": "selector", "outbounds": [ "🎯 全球直连", "🚀 节点选择" ] },
     { "tag": "🍎 苹果服务", "type": "selector", "outbounds": [ "🎯 全球直连", "🚀 节点选择" ] },
-    { "tag": "🌍 国外媒体", "type": "selector", "outbounds": [ "🚀 节点选择", "🇭🇰 香港节点", "🇹🇼 台湾节点", "🇯🇵 日本节点", "🇸🇬 新加坡节点", "🇺🇸 美国节点", "👑 高级节点", "📉 省流节点", {providers_tags} ] },
-    { "tag": "🎮 游戏平台", "type": "selector", "outbounds": [ "🚀 节点选择", "🇭🇰 香港节点", "🇹🇼 台湾节点", "🇯🇵 日本节点", "🇸🇬 新加坡节点", "🇺🇸 美国节点", "👑 高级节点", "📉 省流节点", {providers_tags} ] },
     { "tag": "🛡️ 直连域名", "type": "selector", "outbounds": [ "🎯 全球直连", "🚀 节点选择" ] },
     { "tag": "🀄️ 直连 IP", "type": "selector", "outbounds": [ "🎯 全球直连", "🚀 节点选择" ] },
     { "tag": "🧱 代理域名", "type": "selector", "outbounds": [ "🚀 节点选择", "🎯 全球直连" ] },
@@ -42,8 +40,6 @@
       { "geosite": [ "apple-cn" ], "outbound": "🍎 苹果服务" },
       { "geosite": [ "google-cn" ], "outbound": "🇬 谷歌服务" },
       { "geosite": [ "games-cn" ], "outbound": "🎮 游戏服务" },
-      { "geosite": [ "media" ], "outbound": "🌍 国外媒体" },
-      { "geosite": [ "games" ], "outbound": "🎮 游戏平台" },
       { "geosite": [ "ai" ], "outbound": "🤖 人工智能" },
       { "geosite": [ "networktest" ], "outbound": "📈 网络测试" },
       { "geosite": [ "proxy" ], "outbound": "🧱 代理域名" },
@@ -51,8 +47,6 @@
       { "geosite": [ "cn" ], "outbound": "🛡️ 直连域名" },
       { "geoip": [ "private" ], "outbound": "🎯 全球直连", "skip_resolve": true },
       { "geoip": [ "cn" ], "outbound": "🀄️ 直连 IP" },
-      { "geoip": [ "media" ], "outbound": "🌍 国外媒体", "skip_resolve": true },
-      { "geoip": [ "games" ], "outbound": "🎮 游戏平台", "skip_resolve": true },
       { "geoip": [ "telegram" ], "outbound": "📲 电报消息", "skip_resolve": true }
     ],
     "final": "🐟 漏网之鱼"

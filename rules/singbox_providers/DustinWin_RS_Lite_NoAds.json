@@ -1,7 +1,15 @@
-//DustinWin-ruleset轻量规则
+//DustinWin-ruleset去广告精简规则
 {
   "outbounds": [
     { "tag": "🚀 节点选择", "type": "selector", "outbounds": [ "🇭🇰 香港节点", "🇹🇼 台湾节点", "🇯🇵 日本节点", "🇸🇬 新加坡节点", "🇺🇸 美国节点", "👑 高级节点", "📉 省流节点", {providers_tags} ] },
+    { "tag": "📈 网络测试", "type": "selector", "outbounds": [ "🎯 全球直连", "🇭🇰 香港节点", "🇹🇼 台湾节点", "🇯🇵 日本节点", "🇸🇬 新加坡节点", "🇺🇸 美国节点", "👑 高级节点", "📉 省流节点", {providers_tags} ] },
+    { "tag": "🤖 人工智能", "type": "selector", "outbounds": [ "🚀 节点选择", "🇭🇰 香港节点", "🇹🇼 台湾节点", "🇯🇵 日本节点", "🇸🇬 新加坡节点", "🇺🇸 美国节点" ] },
+    { "tag": "📋 Trackerslist", "type": "selector", "outbounds": [ "🎯 全球直连", "🚀 节点选择" ] },
+    { "tag": "🎮 游戏服务", "type": "selector", "outbounds": [ "🎯 全球直连", "👑 高级节点", "🚀 节点选择" ] },
+    { "tag": "🪟 微软服务", "type": "selector", "outbounds": [ "🎯 全球直连", "🚀 节点选择" ] },
+    { "tag": "🇬 谷歌服务", "type": "selector", "outbounds": [ "🎯 全球直连", "🚀 节点选择" ] },
+    { "tag": "🍎 苹果服务", "type": "selector", "outbounds": [ "🎯 全球直连", "🚀 节点选择" ] },
+    { "tag": "🛡️ 直连域名", "type": "selector", "outbounds": [ "🎯 全球直连", "🚀 节点选择" ] },
     { "tag": "🀄️ 直连 IP", "type": "selector", "outbounds": [ "🎯 全球直连", "🚀 节点选择" ] },
     { "tag": "🧱 代理域名", "type": "selector", "outbounds": [ "🚀 节点选择", "🎯 全球直连" ] },
     { "tag": "📲 电报消息", "type": "selector", "outbounds": [ "🚀 节点选择", "🇭🇰 香港节点", "🇹🇼 台湾节点", "🇯🇵 日本节点", "🇸🇬 新加坡节点", "🇺🇸 美国节点", "👑 高级节点", "📉 省流节点", {providers_tags} ] },
@@ -24,8 +32,16 @@
       { "clash_mode": [ "Direct" ], "outbound": "DIRECT" },
       { "clash_mode": [ "Global" ], "outbound": "GLOBAL" },
       { "rule_set": [ "private" ], "outbound": "🎯 全球直连" },
-      { "rule_set": [ "tld-proxy" ], "outbound": "🧱 代理域名" },
+      { "rule_set": [ "trackerslist" ], "outbound": "📋 Trackerslist" },
+      { "rule_set": [ "microsoft-cn" ], "outbound": "🪟 微软服务" },
+      { "rule_set": [ "apple-cn" ], "outbound": "🍎 苹果服务" },
+      { "rule_set": [ "google-cn" ], "outbound": "🇬 谷歌服务" },
+      { "rule_set": [ "games-cn" ], "outbound": "🎮 游戏服务" },
+      { "rule_set": [ "ai" ], "outbound": "🤖 人工智能" },
+      { "rule_set": [ "networktest" ], "outbound": "📈 网络测试" },
       { "rule_set": [ "proxy" ], "outbound": "🧱 代理域名" },
+      { "rule_set": [ "tld-cn" ], "outbound": "🛡️ 直连域名" },
+      { "rule_set": [ "cn" ], "outbound": "🛡️ 直连域名" },
       { "rule_set": [ "privateip" ], "outbound": "🎯 全球直连", "skip_resolve": true },
       { "rule_set": [ "cnip" ], "outbound": "🀄️ 直连 IP" },
       { "rule_set": [ "telegramip" ], "outbound": "📲 电报消息", "skip_resolve": true }
@@ -39,11 +55,53 @@
         "url": "https://github.com/DustinWin/ruleset_geodata/releases/download/sing-box-ruleset-compatible/private.srs"
       },
       {
-        "tag": "tld-proxy",
+        "tag": "trackerslist",
         "type": "remote",
         "format": "binary",
-        "path": "./tld-proxy.srs",
-        "url": "https://github.com/DustinWin/ruleset_geodata/releases/download/sing-box-ruleset-compatible/tld-proxy.srs"
+        "path": "./trackerslist.srs",
+        "url": "https://github.com/DustinWin/ruleset_geodata/releases/download/sing-box-ruleset-compatible/trackerslist.srs"
+      },
+      {
+        "tag": "microsoft-cn",
+        "type": "remote",
+        "format": "binary",
+        "path": "./microsoft-cn.srs",
+        "url": "https://github.com/DustinWin/ruleset_geodata/releases/download/sing-box-ruleset-compatible/microsoft-cn.srs"
+      },
+      {
+        "tag": "apple-cn",
+        "type": "remote",
+        "format": "binary",
+        "path": "./apple-cn.srs",
+        "url": "https://github.com/DustinWin/ruleset_geodata/releases/download/sing-box-ruleset-compatible/apple-cn.srs"
+      },
+      {
+        "tag": "google-cn",
+        "type": "remote",
+        "format": "binary",
+        "path": "./google-cn.srs",
+        "url": "https://github.com/DustinWin/ruleset_geodata/releases/download/sing-box-ruleset-compatible/google-cn.srs"
+      },
+      {
+        "tag": "games-cn",
+        "type": "remote",
+        "format": "binary",
+        "path": "./games-cn.srs",
+        "url": "https://github.com/DustinWin/ruleset_geodata/releases/download/sing-box-ruleset-compatible/games-cn.srs"
+      },
+      {
+        "tag": "ai",
+        "type": "remote",
+        "format": "binary",
+        "path": "./ai.srs",
+        "url": "https://github.com/DustinWin/ruleset_geodata/releases/download/sing-box-ruleset-compatible/ai.srs"
+      },
+      {
+        "tag": "networktest",
+        "type": "remote",
+        "format": "binary",
+        "path": "./networktest.srs",
+        "url": "https://github.com/DustinWin/ruleset_geodata/releases/download/sing-box-ruleset-compatible/networktest.srs"
       },
       {
         "tag": "proxy",
@@ -51,6 +109,20 @@
         "format": "binary",
         "path": "./proxy.srs",
         "url": "https://github.com/DustinWin/ruleset_geodata/releases/download/sing-box-ruleset-compatible/proxy.srs"
+      },
+      {
+        "tag": "tld-cn",
+        "type": "remote",
+        "format": "binary",
+        "path": "./tld-cn.srs",
+        "url": "https://github.com/DustinWin/ruleset_geodata/releases/download/sing-box-ruleset-compatible/tld-cn.srs"
+      },
+      {
+        "tag": "cn",
+        "type": "remote",
+        "format": "binary",
+        "path": "./cn.srs",
+        "url": "https://github.com/DustinWin/ruleset_geodata/releases/download/sing-box-ruleset-compatible/cn.srs"
       },
       {
         "tag": "privateip",

@@ -1,4 +1,4 @@
-#DustinWin-ruleset全分组规则
+#DustinWin-ruleset去广告规则
 proxy-groups:
   - {name: 🚀 节点选择, type: select, proxies: [🇭🇰 香港节点, 🇹🇼 台湾节点, 🇯🇵 日本节点, 🇸🇬 新加坡节点, 🇺🇸 美国节点, 👑 高级节点, 📉 省流节点, {providers_tags}]}
   - {name: 📈 网络测试, type: select, proxies: [🎯 全球直连, 🇭🇰 香港节点, 🇹🇼 台湾节点, 🇯🇵 日本节点, 🇸🇬 新加坡节点, 🇺🇸 美国节点, 👑 高级节点, 📉 省流节点, {providers_tags}]}
@@ -13,12 +13,9 @@ proxy-groups:
   - {name: 🛡️ 直连域名, type: select, proxies: [🎯 全球直连, 🚀 节点选择]}
   - {name: 🀄️ 直连 IP, type: select, proxies: [🎯 全球直连, 🚀 节点选择]}
   - {name: 🧱 代理域名, type: select, proxies: [🚀 节点选择, 🎯 全球直连]}
-  - {name: 📲 电报消息, type: select, proxies: [🚀 节点选择, 🇭🇰 香港节点, 🇹🇼 台湾节点, 🇯🇵 日本节点, 🇸🇬 新加坡节点, 🇺🇸 美国节点, 👑 高级节点, 📉 省流节点, {providers_tags}}]}
+  - {name: 📲 电报消息, type: select, proxies: [🚀 节点选择, 🇭🇰 香港节点, 🇹🇼 台湾节点, 🇯🇵 日本节点, 🇸🇬 新加坡节点, 🇺🇸 美国节点, 👑 高级节点, 📉 省流节点, {providers_tags}]}
   - {name: 🔒 私有网络, type: select, proxies: [🎯 全球直连], hidden: true}
   - {name: 🐟 漏网之鱼, type: select, proxies: [🚀 节点选择, 🇭🇰 香港节点, 🇹🇼 台湾节点, 🇯🇵 日本节点, 🇸🇬 新加坡节点, 🇺🇸 美国节点, 👑 高级节点, 📉 省流节点, {providers_tags}, 🎯 全球直连]}
-  - {name: 🛑 广告域名, type: select, proxies: [🔴 全球拦截, 🟢 全球绕过]}
-  - {name: 🔴 全球拦截, type: select, proxies: [REJECT], hidden: true}
-  - {name: 🟢 全球绕过, type: select, proxies: [PASS], hidden: true}
   - {name: 🎯 全球直连, type: select, proxies: [DIRECT], hidden: true}
 
   - {name: 👑 高级节点, type: url-test, tolerance: 100, lazy: true, include-all-providers: true, filter: "(?i)(专线|专用|高级|直连|急速|高倍率|游戏|game|IEPL|IPLC|AIA|CTM|CC|AC)"}
@@ -36,14 +33,6 @@ rule-providers:
     format: mrs
     path: ./rules/private.mrs
     url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/private.mrs"
-    interval: 86400
-
-  ads:
-    type: http
-    behavior: domain
-    format: mrs
-    path: ./rules/ads.mrs
-    url: "https://github.com/DustinWin/ruleset_geodata/releases/download/mihomo-ruleset/ads.mrs"
     interval: 86400
 
   trackerslist:
@@ -184,7 +173,6 @@ rule-providers:
 
 rules:
   - RULE-SET,private,🔒 私有网络
-  - RULE-SET,ads,🛑 广告域名
   - RULE-SET,trackerslist,📋 Trackerslist
   - RULE-SET,microsoft-cn,🪟 微软服务
   - RULE-SET,apple-cn,🍎 苹果服务
